@@ -18,3 +18,23 @@
       args:
         chdir: $HOME
         creates: node_joined.log
+
+    - pause:
+        seconds: 20
+        echo: no
+
+    - name: Update kubelet config
+      lineinfile:
+        path: /var/lib/kubelet/config.yaml
+        backup: yes
+        regexp: '^readOnlyPort: 10255'
+        insertafter: '^port: 10250'
+        line: 'readOnlyPort: 10255'
+      register: kubelet
+
+    - name: Restart kubelet
+      service:
+        name: kubelet
+        state: restarted
+      when: kubelet.changed
+

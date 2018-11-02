@@ -53,7 +53,7 @@
 
   - name: Wait for rebooted servers to come back
     local_action: wait_for host={{ ansible_ssh_host | default(inventory_hostname) }} state=started port=22 delay=30 timeout=300 connect_timeout=15
-    when: rebooting|changed
+    when: rebooting.changed
 
 # Install Docker
   - name: Update apt
@@ -97,14 +97,6 @@
       - kubelet
       - kubeadm
       - kubectl
-
-  - name: Update kubelet config
-    lineinfile:
-      path: /var/lib/kubelet/config.yaml 
-      backup: yes
-      regexp: '^readOnlyPort: 10255'
-      insertafter: '^port: 10250'
-      line: 'readOnlyPort: 10255'
 
 # Start Services
   - name: Start and enable docker.
