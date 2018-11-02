@@ -101,6 +101,7 @@
   - name: Update kubelet config
     lineinfile:
       path: /var/lib/kubelet/config.yaml 
+      backup: yes
       regexp: '^readOnlyPort: 10255'
       insertafter: '^port: 10250'
       line: 'readOnlyPort: 10255'
