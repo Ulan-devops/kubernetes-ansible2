@@ -12,15 +12,6 @@
       msg: "Playbook works on Ubuntu only!!!"
     when: ansible_os_family == "Ubuntu"
 
-# Disable Apparmor
-  - name: Disable apparmor
-    command: "{{item}}"
-    with_items:
-     - service apparmor stop
-     - service apparmor teardown
-     - update-rc.d apparmor disable
-    ignore_errors: true
-
 # Disable firewall
   - name: Disable UFW
     ufw:
@@ -36,10 +27,11 @@
      - swapoff -a
     ignore_errors: true
 
-# Upgrade kernel
-  - name: Upgrade packages
+# Upgrade Ubuntu
+  - name: Update Kernel
     apt:
-      upgrade: dist
+      name: "linux-generic"
+      state: latest
       update_cache: yes
     register: dist
 
@@ -74,10 +66,21 @@
   - name: Install Docker repo
     shell: "echo \"deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable\" > /etc/apt/sources.list.d/docker.list"
 
+  - name: Uninstall old versions of Docker
+    apt:
+      name: "{{ packages }}"
+      state: absent
+    vars:
+       packages:
+       - docker
+       - docker-engine
+       - docker.io
+
   - name: Install Docker-CE
     apt:
-      name: docker-ce
-      state: latest
+      name: "docker-ce=17.12.1~ce-0~ubuntu"
+      state: present
+      force_apt_get: yes
       update_cache: yes
 
 # Install Kubernetes
