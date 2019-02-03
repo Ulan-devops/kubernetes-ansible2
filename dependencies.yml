@@ -78,7 +78,7 @@
 
   - name: Install Docker-CE
     apt:
-      name: "docker-ce=17.12.1~ce-0~ubuntu"
+      name: "docker-ce=18.06.0~ce~3-0~ubuntu"
       state: present
       force_apt_get: yes
       update_cache: yes
